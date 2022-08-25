@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: poi
+  name: poi
+  namespace: api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: poi
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: poi
+    spec:
+      containers:
+      - image: registryrvy7760.azurecr.io/tripinsights/poi:1.0
+        name: poi
+        ports:
+        - containerPort: 80
+        resources: {}
+        env:
+        - name: WEB_SERVER_BASE_URI
+          value: 'http://0.0.0.0'
+        - name: WEB_PORT
+          value: '8080'
+        - name: ASPNETCORE_ENVIRONMENT
+          value: 'Production'        
+        - name: SQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: sql-conn
+              key: SQL_USER
+        - name: SQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: sql-conn
+              key: SQL_PASSWORD
+        - name: SQL_SERVER
+          valueFrom:
+            secretKeyRef:
+              name: sql-conn
+              key: SQL_SERVER
+      #   volumeMounts:
+      #   - name: secrets-store01-inline
+      #     mountPath: "/mnt/secrets-store"
+      #     readOnly: true
+      # # serviceAccountName: poi
+      # volumes:
+      #   - name: secrets-store01-inline
+      #     csi:
+      #       driver: secrets-store.csi.k8s.io
+      #       readOnly: true
+      #       volumeAttributes:
+      #         secretProviderClass: "azure-kvname-system-msi"                  
+
+status: {}

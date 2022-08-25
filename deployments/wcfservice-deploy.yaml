@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wcfservice
+  labels:
+    app: wcfservice
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: wcfservice
+      labels:
+        app: wcfservice
+    spec:
+      nodeSelector:
+        "kubernetes.io/os": windows
+      containers:
+      - name: wcfservice
+        image: registryrvy7760.azurecr.io/wcfservice:1.0
+        resources:
+          limits:
+            cpu: 1
+            memory: 800M
+        ports:
+          - containerPort: 80
+  selector:
+    matchLabels:
+      app: wcfservice
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wcfservice
+spec:
+  type: ClusterIP
+  ports:
+  - protocol: TCP
+    port: 80
+  selector:
+    app: wcfservice

@@ -1,0 +1,48 @@
+# This is a SecretProviderClass example using system-assigned identity to access your key vault
+apiVersion: secrets-store.csi.x-k8s.io/v1
+kind: SecretProviderClass
+metadata:
+  name: azure-kvname-system-msi
+spec:
+  provider: azure
+  parameters:
+    usePodIdentity: "false"
+    useVMManagedIdentity: "true"    # Set to true for using managed identity
+    userAssignedIdentityID: ""      # If empty, then defaults to use the system assigned identity on the VM
+    keyvaultName: ahmedbhamkeyvault2
+    cloudName: ""                   # [OPTIONAL for Azure] if not provided, the Azure environment defaults to AzurePublicCloud
+    objects:  |
+      array:
+        - |
+          objectName: SQL-USER
+          objectAlias: SQL_USER
+          objectType: secret        # object types: secret, key, or cert
+          objectVersion: ""         # [OPTIONAL] object versions, default to latest if empty
+        - |
+          objectName: SQL-PASSWORD
+          objectAlias: SQL_PASSWORD
+          objectType: secret
+          objectVersion: ""
+        - |
+          objectName: SQL-SERVER
+          objectAlias: SQL_SERVER
+          objectType: secret
+          objectVersion: ""
+    tenantId: 72f988bf-86f1-41af-91ab-2d7cd011db47          # The tenant ID of the key vault
+  secretObjects:
+    - data:
+      - key: SQL_USER                           # data field to populate
+        objectName: SQL-USER                        # name of the mounted content to sync. this could be the object name or the object alias
+      secretName: sql-conn                     # name of the Kubernetes Secret object
+      type: Opaque
+    - data:      
+      - key: SQL_PASSWORD                           # data field to populate
+        objectName: SQL-PASSWORD                        # name of the mounted content to sync. this could be the object name or the object alias
+      secretName: sql-conn                     # name of the Kubernetes Secret object
+      type: Opaque
+    - data:      
+      - key: SQL_SERVER                           # data field to populate
+        objectName: SQL-SERVER                        # name of the mounted content to sync. this could be the object name or the object alias
+      secretName: sql-conn                     # name of the Kubernetes Secret object
+      type: Opaque                
+        

@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: trips
+  name: trips
+  namespace: api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: trips
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: trips
+    spec:
+      containers:
+      - image: registryrvy7760.azurecr.io/tripinsights/trips:1.0
+        name: trips
+        resources: {}
+        env:
+        - name: SQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: sql-conn
+              key: SQL_USER
+        - name: SQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: sql-conn
+              key: SQL_PASSWORD
+        - name: SQL_SERVER
+          valueFrom:
+            secretKeyRef:
+              name: sql-conn
+              key: SQL_SERVER      
+status: {}
